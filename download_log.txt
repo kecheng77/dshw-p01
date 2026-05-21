@@ -1,0 +1,24 @@
+[2026-05-21 21:56:49] SUCCESS  stock_600036_招商银行  shape=(1544, 7)
+[2026-05-21 21:56:50] SUCCESS  stock_601398_工商银行  shape=(1544, 7)
+[2026-05-21 21:56:53] SUCCESS  stock_002594_比亚迪  shape=(1544, 7)
+[2026-05-21 21:56:58] SUCCESS  stock_601633_长城汽车  shape=(1544, 7)
+[2026-05-21 21:57:01] SUCCESS  stock_000002_万科A  shape=(1544, 7)
+[2026-05-21 21:57:04] SUCCESS  stock_600048_保利发展  shape=(1544, 7)
+[2026-05-21 21:57:07] SUCCESS  stock_600519_贵州茅台  shape=(1544, 7)
+[2026-05-21 21:57:10] SUCCESS  stock_000858_五粮液  shape=(1544, 7)
+[2026-05-21 21:57:14] SUCCESS  stock_601857_中国石油  shape=(1544, 7)
+[2026-05-21 21:57:16] SUCCESS  stock_000063_中兴通讯  shape=(1544, 7)
+[2026-05-21 21:57:18] SUCCESS  index_000300_沪深300  shape=(1544, 7)
+[2026-05-21 21:57:21] SUCCESS  index_000905_中证500  shape=(1544, 7)
+[2026-05-21 21:57:28] SUCCESS  macro_cpi  shape=(0, 2)
+[2026-05-21 21:57:30] SUCCESS  macro_m2  shape=(0, 2)
+[2026-05-21 21:57:33] SUCCESS  finance_600036_招商银行  shape=records=20
+[2026-05-21 21:57:35] SUCCESS  finance_601398_工商银行  shape=records=20
+[2026-05-21 21:57:37] SUCCESS  finance_002594_比亚迪  shape=records=40
+[2026-05-21 21:57:39] SUCCESS  finance_601633_长城汽车  shape=records=40
+[2026-05-21 21:57:41] SUCCESS  finance_000002_万科A  shape=records=40
+[2026-05-21 21:57:44] SUCCESS  finance_600048_保利发展  shape=records=40
+[2026-05-21 21:57:46] SUCCESS  finance_600519_贵州茅台  shape=records=40
+[2026-05-21 21:57:48] SUCCESS  finance_000858_五粮液  shape=records=40
+[2026-05-21 21:57:50] SUCCESS  finance_601857_中国石油  shape=records=40
+[2026-05-21 21:57:52] SUCCESS  finance_000063_中兴通讯  shape=records=40
