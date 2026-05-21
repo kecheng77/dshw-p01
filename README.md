@@ -68,3 +68,12 @@ https://github.com/kecheng77/dshw-p01
 - 数据清洗流程的设计
 - 可视化图表的绘制
 - CAPM回归分析及结果解读
+
+
+---
+
+## 📖 Quarto电子书
+
+本项目已使用Quarto发布为电子书，可通过以下地址在线阅读：
+
+**🔗 https://kecheng77.github.io/dshw-p01/**
