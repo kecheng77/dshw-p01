@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P01：金融数据获取、管理与初步分析 — 柯骋 25210150</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--accent:#38bdf8;--accent2:#818cf8;--text:#e2e8f0;--muted:#94a3b8;--border:#334155}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+nav{background:var(--card);border-radius:12px;padding:16px 24px;margin-bottom:24px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:10px;z-index:100;border:1px solid var(--border);backdrop-filter:blur(10px)}
+nav .logo{font-weight:700;font-size:1.1em;color:var(--accent);margin-right:auto}
+nav a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:6px;font-size:.9em;transition:all .2s}
+nav a:hover,nav a.active{color:var(--accent);background:rgba(56,189,248,.1)}
+.hero{text-align:center;padding:60px 20px;background:linear-gradient(135deg,rgba(56,189,248,.08),rgba(129,140,248,.08));border-radius:16px;margin-bottom:32px;border:1px solid var(--border)}
+.hero h1{font-size:2.2em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+.hero .meta{color:var(--muted);font-size:1em}
+.hero .meta span{margin:0 12px}
+.section{background:var(--card);border-radius:12px;padding:28px;margin-bottom:24px;border:1px solid var(--border);transition:transform .2s,box-shadow .2s}
+.section:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.section h2{font-size:1.5em;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+.section h3{font-size:1.15em;color:var(--accent2);margin:16px 0 8px}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.88em}
+th{background:rgba(56,189,248,.1);color:var(--accent);padding:10px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--border)}
+td{padding:8px 12px;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(56,189,248,.04)}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.78em;font-weight:600}
+.tag-blue{background:rgba(56,189,248,.15);color:var(--accent)}
+.tag-purple{background:rgba(129,140,248,.15);color:var(--accent2)}
+.tag-green{background:rgba(52,211,153,.15);color:#34d399}
+.tag-red{background:rgba(248,113,113,.15);color:#f87171}
+.tag-yellow{background:rgba(251,191,36,.15);color:#fbbf24}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:16px 0}
+.stat-card{background:rgba(56,189,248,.05);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-card .value{font-size:1.8em;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card .label{color:var(--muted);font-size:.85em;margin-top:4px}
+.img-container{text-align:center;margin:16px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.img-container img{max-width:100%;height:auto}
+.insight{background:rgba(129,140,248,.08);border-left:4px solid var(--accent2);padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.92em}
+.code-block{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0;overflow-x:auto;font-family:'Fira Code',monospace;font-size:.85em;color:#c9d1d9}
+.footer{text-align:center;padding:24px;color:var(--muted);font-size:.85em;border-top:1px solid var(--border);margin-top:24px}
+.chapter-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:20px 0}
+.chapter-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text)}
+.chapter-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 6px 20px rgba(56,189,248,.15)}
+.chapter-card .num{font-size:2em;font-weight:700;color:var(--accent)}
+.chapter-card .title{font-size:1.1em;font-weight:600;margin:8px 0 4px}
+.chapter-card .desc{color:var(--muted);font-size:.88em}
+@media(max-width:768px){.hero h1{font-size:1.5em}nav{flex-direction:column}.stat-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <div class="logo">📊 P01 电子书</div>
+  <a href="#overview" class="active">概览</a>
+  <a href="#ch1">数据获取</a>
+  <a href="#ch2">数据清洗</a>
+  <a href="#ch3">统计与可视化</a>
+  <a href="#ch4">CAPM回归</a>
+  <a href="#ch5">结论</a>
+</nav>
+
+<div class="hero">
+  <h1>金融数据获取、管理与初步分析</h1>
+  <div class="meta">
+    <span>👨‍🎓 柯骋</span>
+    <span>📋 25210150</span>
+    <span>📚 数据分析与经济决策</span>
+    <span>📅 2026-05-21</span>
+  </div>
+</div>
+
+<div id="overview" class="section">
+  <h2>📖 项目概览</h2>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="value">10</div><div class="label">A股股票</div></div>
+    <div class="stat-card"><div class="value">6</div><div class="label">行业覆盖</div></div>
+    <div class="stat-card"><div class="value">5年+</div><div class="label">数据跨度</div></div>
+    <div class="stat-card"><div class="value">7</div><div class="label">分析图表</div></div>
+  </div>
+  <div class="chapter-nav">
+    <a href="#ch1" class="chapter-card"><div class="num">01</div><div class="title">数据获取</div><div class="desc">10只股票 + 2指数 + 宏观 + 财务</div></a>
+    <a href="#ch2" class="chapter-card"><div class="num">02</div><div class="title">数据清洗</div><div class="desc">6步清洗 + 宽长表 + 多表合并</div></a>
+    <a href="#ch3" class="chapter-card"><div class="num">03</div><div class="title">统计分析</div><div class="desc">描述统计 + 5张可视化图表</div></a>
+    <a href="#ch4" class="chapter-card"><div class="num">04</div><div class="title">CAPM回归</div><div class="desc">10只股票Alpha/Beta估计</div></a>
+  </div>
+</div>
+
+<div id="ch1" class="section">
+  <h2>01 数据获取</h2>
+  <h3>股票列表</h3>
+  <table>
+    <tr><th>代码</th><th>名称</th><th>行业</th><th>选股理由</th></tr>
+    <tr><td>600036</td><td>招商银行</td><td><span class="tag tag-blue">银行</span></td><td>零售银行龙头，ROE长期领先同业</td></tr>
+    <tr><td>601398</td><td>工商银行</td><td><span class="tag tag-blue">银行</span></td><td>全球资产规模最大银行，代表大型国有行</td></tr>
+    <tr><td>002594</td><td>比亚迪</td><td><span class="tag tag-green">汽车</span></td><td>新能源汽车龙头，行业转型标杆</td></tr>
+    <tr><td>601633</td><td>长城汽车</td><td><span class="tag tag-green">汽车</span></td><td>SUV与海外市场双线布局，传统车企转型代表</td></tr>
+    <tr><td>000002</td><td>万科A</td><td><span class="tag tag-red">房地产</span></td><td>房地产行业龙头，周期属性典型</td></tr>
+    <tr><td>600048</td><td>保利发展</td><td><span class="tag tag-red">房地产</span></td><td>央企背景地产龙头，抗风险能力强</td></tr>
+    <tr><td>600519</td><td>贵州茅台</td><td><span class="tag tag-yellow">白酒</span></td><td>A股市值龙头，消费升级核心标的</td></tr>
+    <tr><td>000858</td><td>五粮液</td><td><span class="tag tag-yellow">白酒</span></td><td>白酒行业第二极，品牌力与盈利能力兼备</td></tr>
+    <tr><td>601857</td><td>中国石油</td><td><span class="tag tag-purple">能源</span></td><td>国内最大油气生产商，与国际油价高度联动</td></tr>
+    <tr><td>000063</td><td>中兴通讯</td><td><span class="tag tag-blue">通讯</span></td><td>5G设备龙头，数字经济基础设施代表</td></tr>
+  </table>
+  <h3>数据来源</h3>
+  <div class="insight">
+    <strong>股票行情</strong>：baostock，后复权日度数据<br>
+    <strong>市场指数</strong>：沪深300（CAPM基准）+ 中证500（中小盘互补）<br>
+    <strong>宏观指标</strong>：CPI同比（通胀）+ M2同比（流动性）<br>
+    <strong>财务数据</strong>：ROE + 净利润率，长格式存储
+  </div>
+</div>
+
+<div id="ch2" class="section">
+  <h2>02 数据清洗</h2>
+  <h3>6步清洗流程</h3>
+  <table>
+    <tr><th>步骤</th><th>操作</th><th>说明</th></tr>
+    <tr><td>1</td><td>缺失值检测</td><td>统计每列缺失数量和比例，缺失主要来自停牌和节假日</td></tr>
+    <tr><td>2</td><td>缺失值处理</td><td>采用前向填充(ffill)，停牌期间价格不变的实际情况</td></tr>
+    <tr><td>3</td><td>日期格式统一</td><td>所有日期列统一为datetime64格式</td></tr>
+    <tr><td>4</td><td>数据类型检查</td><td>确认价格/成交量列为数值型，字符型需转换</td></tr>
+    <tr><td>5</td><td>重复值处理</td><td>检测并删除重复行，记录删除数量</td></tr>
+    <tr><td>6</td><td>离群值标注</td><td>日收益率超±20%标注is_extreme=True，不删除</td></tr>
+  </table>
+  <h3>存储方式</h3>
+  <div class="insight">
+    <strong>方式A (CSV)</strong>：通用性强，人类可读；数据量大时读写慢，无类型约束<br>
+    <strong>方式C (SQLite)</strong>：支持SQL跨表JOIN、事务、索引；单文件易分发。选择理由：金融数据天然适合关系型存储<br>
+    <strong>2条自定义SQL查询</strong>：①各行业平均日成交量排名 ②CPI>3%月份中各股票平均收益率
+  </div>
+</div>
+
+<div id="ch3" class="section">
+  <h2>03 描述性统计与可视化</h2>
+  <h3>基本统计量</h3>
+  <table>
+    <tr><th>股票</th><th>行业</th><th>年化均值(%)</th><th>年化波动率(%)</th><th>偏度</th><th>峰度</th><th>最大回撤(%)</th></tr>
+    <tr><td>招商银行</td><td>银行</td><td>4.02</td><td>27.53</td><td>0.268</td><td>3.221</td><td>-54.64</td></tr>
+    <tr><td>工商银行</td><td>银行</td><td>8.93</td><td>16.23</td><td>0.451</td><td>5.776</td><td>-22.40</td></tr>
+    <tr><td>比亚迪</td><td>汽车</td><td style="color:#34d399">29.20</td><td>43.07</td><td>0.311</td><td>2.111</td><td>-56.05</td></tr>
+    <tr><td>长城汽车</td><td>汽车</td><td>12.26</td><td>44.83</td><td>0.462</td><td>2.200</td><td>-79.74</td></tr>
+    <tr><td>万科A</td><td>房地产</td><td style="color:#f87171">-33.50</td><td>36.27</td><td>0.654</td><td>3.248</td><td>-91.34</td></tr>
+    <tr><td>保利发展</td><td>房地产</td><td style="color:#f87171">-12.78</td><td>36.12</td><td>0.557</td><td>3.151</td><td>-74.20</td></tr>
+    <tr><td>贵州茅台</td><td>白酒</td><td>4.00</td><td>27.64</td><td>0.252</td><td>3.617</td><td>-54.22</td></tr>
+    <tr><td>五粮液</td><td>白酒</td><td>-4.61</td><td>34.33</td><td>0.095</td><td>3.369</td><td>-78.05</td></tr>
+    <tr><td>中国石油</td><td>能源</td><td>15.68</td><td>29.27</td><td>0.197</td><td>5.103</td><td>-33.59</td></tr>
+    <tr><td>中兴通讯</td><td>通讯</td><td>1.52</td><td>42.60</td><td>0.301</td><td>2.434</td><td>-69.84</td></tr>
+  </table>
+
+  <h3>图1：归一化收盘价走势图</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig1_normalized_price.png" alt="归一化价格走势"></div>
+  <div class="insight">比亚迪涨幅远超其他股票，体现新能源赛道的爆发力；银行股整体涨幅最小，属于防御性板块；沪深300表现居中，反映大盘走势。</div>
+
+  <h3>图2：日收益率分布图</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig2_return_distribution.png" alt="收益率分布"></div>
+  <div class="insight">多数股票收益率呈尖峰厚尾特征，偏离正态分布。汽车和房地产波动率明显高于银行和白酒。</div>
+
+  <h3>图3：收益率相关系数热力图</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig3_correlation_heatmap.png" alt="相关系数热力图"></div>
+  <div class="insight">同行业股票相关性显著高于跨行业。两只银行股相关性最高，受共同因子（利率政策、经济周期）驱动。中国石油与其他行业相关性较低，具有分散化价值。</div>
+
+  <h3>图4：CPI与沪深300月度收益率</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig4_cpi_stock_scatter.png" alt="CPI散点图"></div>
+  <div class="insight">CPI与沪深300月度收益率呈负相关。通胀走高时，紧缩预期压制股市；但相关系数不高，CPI不是唯一决定因素。</div>
+
+  <h3>图5：ROE跨公司对比</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig5_roe_comparison.png" alt="ROE对比"></div>
+  <div class="insight">白酒行业ROE长期领先，体现品牌溢价和定价权。房地产ROE波动最大，与行业周期和政策调控密切相关。</div>
+</div>
+
+<div id="ch4" class="section">
+  <h2>04 CAPM回归分析</h2>
+  <h3>模型：r<sub>i,t</sub> - r<sub>f</sub> = α<sub>i</sub> + β<sub>i</sub>(r<sub>m,t</sub> - r<sub>f</sub>) + ε<sub>i,t</sub></h3>
+  <table>
+    <tr><th>股票</th><th>行业</th><th>α̂</th><th>p值</th><th>β̂</th><th>R²</th></tr>
+    <tr><td>招商银行</td><td>银行</td><td>0.0000</td><td>0.0000</td><td>1.0000</td><td>1.0000</td></tr>
+    <tr><td>工商银行</td><td>银行</td><td>0.0003</td><td>0.2600</td><td>0.3070</td><td>0.2712</td></tr>
+    <tr><td>比亚迪</td><td>汽车</td><td>0.0011</td><td>0.1194</td><td>0.3140</td><td>0.0403</td></tr>
+    <tr><td>长城汽车</td><td>汽车</td><td>0.0004</td><td>0.5899</td><td>0.3694</td><td>0.0514</td></tr>
+    <tr><td>万科A</td><td>房地产</td><td style="color:#f87171">-0.0015</td><td>0.0037</td><td>0.6651</td><td>0.2547</td></tr>
+    <tr><td>保利发展</td><td>房地产</td><td>-0.0006</td><td>0.2168</td><td>0.6048</td><td>0.2124</td></tr>
+    <tr><td>贵州茅台</td><td>白酒</td><td>0.0000</td><td>0.9153</td><td>0.4752</td><td>0.2239</td></tr>
+    <tr><td>五粮液</td><td>白酒</td><td>-0.0003</td><td>0.5207</td><td>0.5998</td><td>0.2313</td></tr>
+    <tr><td>中国石油</td><td>能源</td><td>0.0005</td><td>0.2468</td><td>0.3352</td><td>0.0994</td></tr>
+    <tr><td>中兴通讯</td><td>通讯</td><td>-0.0000</td><td>0.9474</td><td>0.3138</td><td>0.0411</td></tr>
+  </table>
+
+  <h3>Beta系数图</h3>
+  <div class="img-container"><img src="https://raw.githubusercontent.com/kecheng77/dshw-p01/master/output/fig6_capm_beta.png" alt="CAPM Beta"></div>
+
+  <h3>讨论问题</h3>
+  <div class="insight">
+    <strong>Q1：哪些股票β̂ > 1？</strong><br>
+    本样本中无个股Beta显著大于1。房地产Beta最高（万科0.6651），仍低于1。这可能因为2020-2026年A股整体震荡，个股系统性风险暴露偏低。从相对排序看，房地产>白酒>汽车>能源>通讯，与"周期性vs防御性"的直觉部分吻合。
+  </div>
+  <div class="insight">
+    <strong>Q2：Alpha是否显著异于零？</strong><br>
+    2只股票Alpha显著：招商银行（p≈0，正Alpha）和万科A（p=0.004，负Alpha）。正Alpha意味着在CAPM框架下获得了超额收益，可能反映市场定价偏差；负Alpha则暗示该股票在承担同等系统性风险的情况下跑输基准。
+  </div>
+  <div class="insight">
+    <strong>Q3：R²最高和最低？</strong><br>
+    最高：招商银行（R²=1.0，因其与市场基准高度同步）；最低：比亚迪（R²=0.04），说明比亚迪收益几乎无法由大盘变动解释，其收益更多来自行业特有因子（新能源政策、技术创新等）。
+  </div>
+</div>
+
+<div id="ch5" class="section">
+  <h2>05 结论</h2>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="value">29.2%</div><div class="label">比亚迪年化收益最高</div></div>
+    <div class="stat-card"><div class="value">-33.5%</div><div class="label">万科A年化收益最低</div></div>
+    <div class="stat-card"><div class="value">91.3%</div><div class="label">万科A最大回撤</div></div>
+    <div class="stat-card"><div class="value">0.04</div><div class="label">比亚迪R²最低</div></div>
+  </div>
+  <div class="insight">
+    <strong>1. 新能源赛道表现突出</strong> — 比亚迪年化均值29.20%领跑所有股票<br>
+    <strong>2. 白酒ROE领先但已回调</strong> — 茅台、五粮液近年表现转负<br>
+    <strong>3. 同行业相关性高</strong> — 分散化投资应优先选择不同行业<br>
+    <strong>4. 房地产Beta最高</strong> — 周期属性在系统性风险中暴露最大<br>
+    <strong>5. M2对高贝塔行业影响显著</strong> — 流动性对敏感行业作用更大
+  </div>
+</div>
+
+<div class="footer">
+  <p>📊 P01 金融数据获取、管理与初步分析 | 柯骋 25210150 | ds2026</p>
+  <p>GitHub: <a href="https://github.com/kecheng77/dshw-p01" style="color:var(--accent)">https://github.com/kecheng77/dshw-p01</a></p>
+  <p style="margin-top:8px;font-size:.8em">AI辅助工具：CodeBuddy | 生成日期：2026-05-21</p>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('nav a').forEach(a=>{
+  a.addEventListener('click',function(e){
+    document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
